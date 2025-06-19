@@ -82,6 +82,57 @@
                     <label for="description">Descripción</label>
                     <input type="text" id="description" placeholder="Descripción del movimiento" required>
                 </div>
+                
+                <!-- Sección de Inventario de Productos (solo visible para Ventas) -->
+                <div id="productInventorySection" class="input-group" style="display: none; grid-column: 1 / -1;">
+                    <div class="product-inventory-container">
+                        <h3 style="color: #2c3e50; margin-bottom: 15px;">🎯 Seleccionar Producto de Belleza Capilar</h3>
+                        <div class="product-grid">
+                            <div class="input-group">
+                                <label for="productCategory">Categoría de Producto</label>
+                                <select id="productCategory">
+                                    <option value="">Seleccionar categoría...</option>
+                                    <option value="gel">Geles</option>
+                                    <option value="shampoo">Shampoos</option>
+                                    <option value="acondicionador">Acondicionadores</option>
+                                    <option value="mascarilla">Mascarillas</option>
+                                    <option value="tratamiento">Tratamientos</option>
+                                    <option value="spray">Sprays</option>
+                                    <option value="serum">Serums</option>
+                                    <option value="aceite">Aceites</option>
+                                    <option value="mousse">Mousse</option>
+                                    <option value="cera">Ceras</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productSelect">Producto</label>
+                                <select id="productSelect">
+                                    <option value="">Seleccionar producto...</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label for="productQuantity">Cantidad</label>
+                                <input type="number" id="productQuantity" min="1" value="1">
+                            </div>
+                            <div class="input-group">
+                                <label for="productPrice">Precio Unitario</label>
+                                <input type="number" id="productPrice" step="0.01" placeholder="0.00" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="productCode">Código</label>
+                                <input type="text" id="productCode" placeholder="Código automático" readonly>
+                            </div>
+                            <div class="input-group">
+                                <label for="totalPrice">Total</label>
+                                <input type="number" id="totalPrice" step="0.01" placeholder="0.00" readonly>
+                            </div>
+                        </div>
+                        <div class="product-actions">
+                            <button type="button" class="btn btn-secondary" onclick="addNewProduct()">➕ Agregar Nuevo Producto</button>
+                            <button type="button" class="btn btn-info" onclick="viewInventory()">📦 Ver Inventario</button>
+                        </div>
+                    </div>
+                </div>
                 <div class="input-group">
                     <label for="amount">Monto ($)</label>
                     <input type="number" id="amount" step="0.01" placeholder="0.00" required>
