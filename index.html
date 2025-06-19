@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos e Ingresos</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Control de Gastos e Ingresos</h1>
+            <p>Gestiona tus finanzas personales de manera inteligente</p>
+        </div>
+
+        <div class="month-year-selector">
+            <div class="selector-grid">
+                <div class="input-group">
+                    <label for="currentMonth">Mes Actual</label>
+                    <select id="currentMonth">
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="currentYear">Año Actual</label>
+                    <input type="number" id="currentYear" value="2025" min="2020" max="2030">
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card income">
+                <h3>💚 Total Ingresos</h3>
+                <div class="amount" id="totalIncome">$0.00</div>
+                <small>Este mes</small>
+            </div>
+            <div class="card expense">
+                <h3>💸 Total Gastos</h3>
+                <div class="amount" id="totalExpense">$0.00</div>
+                <small>Este mes</small>
+            </div>
+            <div class="card balance">
+                <h3>💰 Balance</h3>
+                <div class="amount" id="balance">$0.00</div>
+                <small>Ingresos - Gastos</small>
+            </div>
+        </div>
+
+        <div class="input-section">
+            <h2 style="margin-bottom: 20px; color: #2c3e50;">➕ Agregar Movimiento</h2>
+            <div class="input-form">
+                <div class="input-group">
+                    <label for="date">Fecha</label>
+                    <input type="date" id="date" required>
+                </div>
+                <div class="input-group">
+                    <label for="type">Tipo</label>
+                    <select id="type" required>
+                        <option value="">Seleccionar...</option>
+                        <option value="income">💚 Ingreso</option>
+                        <option value="expense">💸 Gasto</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="category">Categoría</label>
+                    <select id="category" required>
+                        <option value="">Seleccionar tipo primero...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="description">Descripción</label>
+                    <input type="text" id="description" placeholder="Descripción del movimiento" required>
+                </div>
+                <div class="input-group">
+                    <label for="amount">Monto ($)</label>
+                    <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                </div>
+                <div class="input-group" style="align-self: end;">
+                    <button class="btn btn-primary" onclick="addTransaction()">Agregar Movimiento</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="filters">
+                <div class="input-group">
+                    <label for="filterMonth">Filtrar por Mes</label>
+                    <select id="filterMonth">
+                        <option value="">Todos los meses</option>
+                        <option value="1">Enero</option>
+                        <option value="2">Febrero</option>
+                        <option value="3">Marzo</option>
+                        <option value="4">Abril</option>
+                        <option value="5">Mayo</option>
+                        <option value="6">Junio</option>
+                        <option value="7">Julio</option>
+                        <option value="8">Agosto</option>
+                        <option value="9">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="filterYear">Filtrar por Año</label>
+                    <select id="filterYear">
+                        <option value="">Todos los años</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="filterType">Filtrar por Tipo</label>
+                    <select id="filterType">
+                        <option value="">Todos</option>
+                        <option value="income">Ingresos</option>
+                        <option value="expense">Gastos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>Categoría</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTable">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #7f8c8d; padding: 40px;">
+                                🎯 No hay movimientos registrados. ¡Agrega tu primer ingreso o gasto!
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3 style="margin-bottom: 15px; color: #2c3e50;">📊 Exportar Datos</h3>
+            <button class="btn btn-primary" onclick="exportToCSV()">Descargar CSV</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
