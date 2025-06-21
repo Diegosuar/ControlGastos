@@ -76,8 +76,25 @@ function init() {
     // Cargar datos guardados
     loadDataFromLocalStorage();
     loadProductInventory();
+    
+    // Debug: Verificar que el inventario se cargó correctamente
+    console.log('Inventario de productos cargado:', Object.keys(productInventory));
+    Object.keys(productInventory).forEach(category => {
+        console.log(`${category}:`, productInventory[category].length, 'productos');
+    });
+    
     updateSummary();
     setupEventListeners();
+}
+
+// Función de debug para verificar el inventario
+function debugInventory() {
+    console.log('=== DEBUG INVENTARIO ===');
+    console.log('productInventory:', productInventory);
+    Object.keys(productInventory).forEach(category => {
+        console.log(`Categoría ${category}:`, productInventory[category]);
+    });
+    console.log('========================');
 }
 
 // Configurar event listeners
@@ -91,10 +108,27 @@ function setupEventListeners() {
     
     // Event listeners para inventario de productos
     document.getElementById('category').addEventListener('change', handleCategoryChange);
-    document.getElementById('productCategory').addEventListener('change', updateProductOptions);
-    document.getElementById('productSelect').addEventListener('change', updateProductDetails);
-    document.getElementById('productQuantity').addEventListener('input', calculateTotal);
-    document.getElementById('productPrice').addEventListener('input', calculateTotal);
+    
+    // Esperar a que los elementos del inventario estén disponibles
+    setTimeout(() => {
+        const productCategoryElement = document.getElementById('productCategory');
+        const productSelectElement = document.getElementById('productSelect');
+        const productQuantityElement = document.getElementById('productQuantity');
+        const productPriceElement = document.getElementById('productPrice');
+        
+        if (productCategoryElement) {
+            productCategoryElement.addEventListener('change', updateProductOptions);
+        }
+        if (productSelectElement) {
+            productSelectElement.addEventListener('change', updateProductDetails);
+        }
+        if (productQuantityElement) {
+            productQuantityElement.addEventListener('input', calculateTotal);
+        }
+        if (productPriceElement) {
+            productPriceElement.addEventListener('input', calculateTotal);
+        }
+    }, 100);
 }
 
 // Actualizar opciones de categoría según el tipo
@@ -123,6 +157,32 @@ function handleCategoryChange() {
         productSection.style.display = 'block';
         // Limpiar campos de producto
         clearProductFields();
+        
+        // Configurar event listeners para la sección de productos
+        setTimeout(() => {
+            const productCategoryElement = document.getElementById('productCategory');
+            const productSelectElement = document.getElementById('productSelect');
+            const productQuantityElement = document.getElementById('productQuantity');
+            const productPriceElement = document.getElementById('productPrice');
+            
+            // Remover event listeners existentes para evitar duplicados
+            if (productCategoryElement) {
+                productCategoryElement.removeEventListener('change', updateProductOptions);
+                productCategoryElement.addEventListener('change', updateProductOptions);
+            }
+            if (productSelectElement) {
+                productSelectElement.removeEventListener('change', updateProductDetails);
+                productSelectElement.addEventListener('change', updateProductDetails);
+            }
+            if (productQuantityElement) {
+                productQuantityElement.removeEventListener('input', calculateTotal);
+                productQuantityElement.addEventListener('input', calculateTotal);
+            }
+            if (productPriceElement) {
+                productPriceElement.removeEventListener('input', calculateTotal);
+                productPriceElement.addEventListener('input', calculateTotal);
+            }
+        }, 50);
     } else {
         productSection.style.display = 'none';
         clearProductFields();
@@ -141,25 +201,43 @@ function clearProductFields() {
 
 // Actualizar opciones de productos según categoría
 function updateProductOptions() {
-    const category = document.getElementById('productCategory').value;
+    const categoryElement = document.getElementById('productCategory');
     const productSelect = document.getElementById('productSelect');
+    
+    if (!categoryElement || !productSelect) {
+        console.warn('Elementos de producto no encontrados');
+        return;
+    }
+    
+    const category = categoryElement.value;
+    console.log('Categoría seleccionada:', category);
     
     productSelect.innerHTML = '<option value="">Seleccionar producto...</option>';
     
     if (category && productInventory[category]) {
+        console.log('Productos encontrados:', productInventory[category].length);
+        
         productInventory[category].forEach(product => {
             const option = document.createElement('option');
             option.value = JSON.stringify(product);
-            option.textContent = `${product.name} - Stock: ${product.stock}`;
+            option.textContent = `${product.name} (${product.code}) - Stock: ${product.stock}`;
+            
+            // Aplicar colores según stock
             if (product.stock <= 5) {
                 option.style.color = '#dc3545'; // Rojo para stock bajo
+                option.style.fontWeight = 'bold';
             } else if (product.stock <= 10) {
                 option.style.color = '#ffc107'; // Amarillo para stock medio
             } else {
                 option.style.color = '#28a745'; // Verde para stock alto
             }
+            
             productSelect.appendChild(option);
         });
+        
+        console.log('Productos agregados al select:', productSelect.children.length - 1);
+    } else {
+        console.log('No hay productos para la categoría:', category);
     }
 }
 
@@ -846,12 +924,70 @@ function loadProductInventory() {
     try {
         const savedInventory = localStorage.getItem('productInventory');
         if (savedInventory) {
-            productInventory = JSON.parse(savedInventory);
+            const loadedInventory = JSON.parse(savedInventory);
+            // Verificar que el inventario cargado tenga datos
+            if (Object.keys(loadedInventory).length > 0) {
+                productInventory = loadedInventory;
+                console.log('Inventario cargado desde localStorage');
+            } else {
+                console.log('Inventario vacío en localStorage, usando inventario por defecto');
+            }
+        } else {
+            console.log('No hay inventario en localStorage, usando inventario por defecto');
         }
     } catch (error) {
         console.warn('No se pudo cargar el inventario:', error);
+        console.log('Usando inventario por defecto');
     }
+}
+
+// Función para resetear el inventario a los valores por defecto
+function resetInventoryToDefault() {
+    productInventory = {
+        capilar: [
+            { code: 'CI001', name: 'Cera Inmortal', price: 25.99, stock: 20 },
+            { code: 'CB001', name: 'Cera Mr. Buff', price: 22.50, stock: 15 },
+            { code: 'CPI001', name: 'Cera en Polvo Inmortal', price: 28.75, stock: 12 },
+            { code: 'CPR001', name: 'Cera en Polvo Roterbart', price: 26.99, stock: 18 },
+            { code: 'SI001', name: 'Shampoo Inmortal', price: 19.99, stock: 25 }
+        ],
+        barba: [
+            { code: 'MK001', name: 'Minoxidil Kirkland', price: 45.99, stock: 8 },
+            { code: 'AR001', name: 'Aceite Barba Roterbart', price: 32.50, stock: 15 },
+            { code: 'AI001', name: 'Aceite Barba Inmortal', price: 35.75, stock: 12 },
+            { code: 'CBI001', name: 'Cera Barba Inmortal', price: 24.99, stock: 20 },
+            { code: 'SBI001', name: 'Shampoo Barba Inmortal', price: 21.50, stock: 18 },
+            { code: 'CRI001', name: 'Crema Barba Inmortal', price: 28.99, stock: 14 },
+            { code: 'DR001', name: 'Derma Roller', price: 15.99, stock: 10 }
+        ],
+        facial: [
+            { code: 'EI001', name: 'Exfoliante Inmortal', price: 18.99, stock: 22 },
+            { code: 'EO001', name: 'Exfoliante Ossion', price: 16.50, stock: 25 },
+            { code: 'MN001', name: 'Mascarilla Negra Nevada', price: 24.75, stock: 16 },
+            { code: 'ASC001', name: 'After Shave Crema Red One', price: 19.99, stock: 20 }
+        ],
+        maquinas: [
+            { code: 'TN001', name: 'Trimmer Nariz', price: 12.99, stock: 8 },
+            { code: 'PK001', name: 'Patillera Kemei', price: 35.50, stock: 6 }
+        ],
+        insumos: [
+            { code: 'CU001', name: 'Cuelloros', price: 2.99, stock: 50 },
+            { code: 'AS001', name: 'After Shave', price: 14.99, stock: 30 },
+            { code: 'ASP001', name: 'After Shave Pequeño', price: 8.50, stock: 40 },
+            { code: 'SG001', name: 'Shaving Gel', price: 12.75, stock: 25 },
+            { code: 'SGP001', name: 'Shaving Gel Pequeño', price: 7.99, stock: 35 },
+            { code: 'CD001', name: 'Cuchillas Dórco', price: 9.99, stock: 45 },
+            { code: 'CL001', name: 'Cuchillas Level 3', price: 11.50, stock: 38 },
+            { code: 'TB001', name: 'Talco Mr Buffel', price: 6.99, stock: 42 }
+        ]
+    };
+    saveProductInventory();
+    console.log('Inventario reseteado a valores por defecto');
 }
 
 // Inicializar cuando la página cargue
 document.addEventListener('DOMContentLoaded', init);
+
+// Función global para debug (puedes llamarla desde la consola del navegador)
+window.debugInventory = debugInventory;
+window.resetInventory = resetInventoryToDefault;
