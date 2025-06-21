@@ -14,7 +14,7 @@ const ExpenseTracker = () => {
     ]
   };
 
-  // Base de datos de productos de barbería y belleza (CORREGIDA)
+  // Base de datos inicial de productos
   const initialProductInventory = {
     capilar: [
       { code: 'CI001', name: 'Cera Inmortal', price: 42000, stock: 20 },
@@ -54,10 +54,12 @@ const ExpenseTracker = () => {
     ]
   };
 
-  // Estados
+  // Estados principales
   const [transactions, setTransactions] = useState([]);
   const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [productInventory, setProductInventory] = useState(initialProductInventory);
+
+  // Estados del formulario
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split('T')[0],
     type: '',
@@ -65,6 +67,8 @@ const ExpenseTracker = () => {
     description: '',
     amount: ''
   });
+
+  // Estados de productos
   const [productData, setProductData] = useState({
     category: '',
     product: null,
@@ -73,18 +77,33 @@ const ExpenseTracker = () => {
     unitPrice: 0,
     total: 0
   });
+
+  // Estados de filtros
   const [filters, setFilters] = useState({
     month: '',
     year: '',
     type: ''
   });
+
+  // Estado del período actual
   const [currentPeriod, setCurrentPeriod] = useState({
     month: new Date().getMonth() + 1,
     year: new Date().getFullYear()
   });
+
+  // Estados de UI
   const [successMessage, setSuccessMessage] = useState('');
   const [showInventoryModal, setShowInventoryModal] = useState(false);
   const [showAddProductModal, setShowAddProductModal] = useState(false);
+
+  // Estados para nuevo producto
+  const [newProduct, setNewProduct] = useState({
+    category: '',
+    name: '',
+    price: '',
+    stock: '',
+    code: ''
+  });
 
   // Efectos
   useEffect(() => {
@@ -98,7 +117,6 @@ const ExpenseTracker = () => {
     }
   }, [successMessage]);
 
-  // Effect para actualizar precio y monto automáticamente
   useEffect(() => {
     if (formData.category === 'Ventas' && productData.product && productData.quantity > 0) {
       const total = productData.unitPrice * productData.quantity;
@@ -107,7 +125,7 @@ const ExpenseTracker = () => {
     }
   }, [productData.unitPrice, productData.quantity, formData.category]);
 
-  // Funciones
+  // Funciones principales
   const showSuccess = (message) => {
     setSuccessMessage(message);
   };
@@ -118,7 +136,6 @@ const ExpenseTracker = () => {
       [field]: value
     }));
 
-    // Limpiar datos de producto si no es venta
     if (field === 'category' && value !== 'Ventas') {
       setProductData({
         category: '',
@@ -131,21 +148,16 @@ const ExpenseTracker = () => {
     }
   };
 
-  // Función para manejar cambios en datos de producto
   const handleProductDataChange = (field, value) => {
-    console.log(`Cambiando ${field} a:`, value);
-    
     setProductData(prev => {
       const newData = { ...prev, [field]: value };
       
       if (field === 'category') {
-        // Limpiar selección de producto cuando cambia categoría
         newData.product = null;
         newData.code = '';
         newData.unitPrice = 0;
         newData.total = 0;
         
-        // Limpiar descripción
         setFormData(prevForm => ({
           ...prevForm,
           description: '',
@@ -156,13 +168,11 @@ const ExpenseTracker = () => {
       if (field === 'product' && value) {
         try {
           const product = JSON.parse(value);
-          console.log('Producto seleccionado:', product);
           
           newData.code = product.code;
           newData.unitPrice = product.price;
           newData.total = product.price * newData.quantity;
           
-          // Actualizar descripción y monto automáticamente
           setFormData(prev => ({
             ...prev,
             description: `Venta: ${product.name} (${product.code})`,
@@ -214,20 +224,18 @@ const ExpenseTracker = () => {
       
       const product = JSON.parse(productData.product);
       
-      // Verificar stock disponible
       if (product.stock < productData.quantity) {
         alert(`⚠️ Stock insuficiente. Disponible: ${product.stock}, Solicitado: ${productData.quantity}`);
         return;
       }
       
-      // Actualizar stock del producto
+      // Actualizar stock
       setProductInventory(prev => {
         const newInventory = { ...prev };
         const productIndex = newInventory[productData.category].findIndex(p => p.code === product.code);
         if (productIndex !== -1) {
           newInventory[productData.category][productIndex].stock -= productData.quantity;
           
-          // Mostrar alerta si el stock queda bajo
           const newStock = newInventory[productData.category][productIndex].stock;
           if (newStock <= 5) {
             setTimeout(() => {
@@ -246,7 +254,6 @@ const ExpenseTracker = () => {
       category,
       description,
       amount: parseFloat(amount),
-      // Agregar información del producto si es una venta
       ...(category === 'Ventas' && {
         productInfo: {
           code: productData.code,
@@ -395,7 +402,6 @@ const ExpenseTracker = () => {
     
     const existingCodes = productInventory[category] ? productInventory[category].map(p => p.code) : [];
     
-    // Intentar usar un prefijo existente de la categoría
     if (categoryNames[category]) {
       for (let prefix of categoryNames[category]) {
         let number = 1;
@@ -412,7 +418,6 @@ const ExpenseTracker = () => {
       }
     }
     
-    // Si no se puede usar un prefijo existente, usar el prefijo general
     const prefix = prefixes[category] || 'PRD';
     let number = 1;
     let code;
@@ -425,7 +430,63 @@ const ExpenseTracker = () => {
     return code;
   };
 
-  // Funciones para manejo de inventario
+  const handleNewProductChange = (field, value) => {
+    setNewProduct(prev => {
+      const updated = { ...prev, [field]: value };
+      
+      if (field === 'category' && value) {
+        updated.code = generateProductCode(value);
+      }
+      
+      return updated;
+    });
+  };
+
+  const saveNewProduct = () => {
+    const { category, name, price, stock, code } = newProduct;
+    
+    if (!category || !name || !price || !stock || !code) {
+      alert('⚠️ Por favor, completa todos los campos');
+      return;
+    }
+
+    if (parseFloat(price) <= 0) {
+      alert('⚠️ El precio debe ser mayor a 0');
+      return;
+    }
+
+    if (parseInt(stock) < 0) {
+      alert('⚠️ El stock no puede ser negativo');
+      return;
+    }
+    
+    const product = {
+      code: code,
+      name: name,
+      price: parseFloat(price),
+      stock: parseInt(stock)
+    };
+    
+    setProductInventory(prev => {
+      const newInventory = { ...prev };
+      if (!newInventory[category]) {
+        newInventory[category] = [];
+      }
+      newInventory[category].push(product);
+      return newInventory;
+    });
+    
+    setShowAddProductModal(false);
+    setNewProduct({
+      category: '',
+      name: '',
+      price: '',
+      stock: '',
+      code: ''
+    });
+    showSuccess(`✅ Producto ${code} agregado exitosamente`);
+  };
+
   const editProductStock = (category, code) => {
     const product = productInventory[category].find(p => p.code === code);
     if (!product) return;
@@ -478,6 +539,7 @@ const ExpenseTracker = () => {
     showSuccess('📊 Inventario exportado exitosamente');
   };
 
+  // Datos calculados
   const { totalIncome, totalExpense, balance } = calculateSummary();
   const currentYear = new Date().getFullYear();
   const years = Array.from({length: 11}, (_, i) => currentYear - 5 + i);
@@ -958,168 +1020,89 @@ const ExpenseTracker = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50" onClick={() => setShowAddProductModal(false)}>
           <div className="bg-white p-8 rounded-2xl max-w-2xl w-full mx-4" onClick={(e) => e.stopPropagation()}>
             <h3 className="text-2xl font-bold text-gray-800 mb-6">➕ Agregar Nuevo Producto</h3>
-            <AddProductForm 
-              productInventory={productInventory}
-              setProductInventory={setProductInventory}
-              setShowAddProductModal={setShowAddProductModal}
-              showSuccess={showSuccess}
-              generateProductCode={generateProductCode}
-              productCategories={productCategories}
-            />
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
+                  <select 
+                    value={newProduct.category}
+                    onChange={(e) => handleNewProductChange('category', e.target.value)}
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  >
+                    <option value="">Seleccionar...</option>
+                    {productCategories.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Código (Automático)</label>
+                  <input 
+                    type="text"
+                    value={newProduct.code}
+                    readOnly
+                    placeholder="Se genera automáticamente"
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg bg-gray-100"
+                  />
+                </div>
+                
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre del Producto</label>
+                  <input 
+                    type="text"
+                    value={newProduct.name}
+                    onChange={(e) => handleNewProductChange('name', e.target.value)}
+                    placeholder="Ej: Gel Fijación Ultra"
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Precio</label>
+                  <input 
+                    type="number"
+                    step="1"
+                    value={newProduct.price}
+                    onChange={(e) => handleNewProductChange('price', e.target.value)}
+                    placeholder="0"
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Stock Inicial</label>
+                  <input 
+                    type="number"
+                    min="0"
+                    value={newProduct.stock}
+                    onChange={(e) => handleNewProductChange('stock', e.target.value)}
+                    placeholder="0"
+                    className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-4 mt-6">
+                <button 
+                  onClick={saveNewProduct}
+                  className="text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
+                  style={{background: 'linear-gradient(135deg, #444b1d 0%, #5a6123 100%)'}}
+                >
+                  💾 Guardar Producto
+                </button>
+                <button 
+                  onClick={() => setShowAddProductModal(false)}
+                  className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300"
+                >
+                  ❌ Cancelar
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
-    </div>
-  );
-};
-
-// Componente para formulario de agregar producto
-const AddProductForm = ({ 
-  productInventory, 
-  setProductInventory, 
-  setShowAddProductModal, 
-  showSuccess, 
-  generateProductCode,
-  productCategories 
-}) => {
-  const [newProduct, setNewProduct] = useState({
-    category: '',
-    name: '',
-    price: '',
-    stock: '',
-    code: ''
-  });
-
-  const handleInputChange = (field, value) => {
-    setNewProduct(prev => {
-      const updated = { ...prev, [field]: value };
-      
-      // Generar código automático cuando se selecciona categoría
-      if (field === 'category' && value) {
-        updated.code = generateProductCode(value);
-      }
-      
-      return updated;
-    });
-  };
-
-  const saveNewProduct = () => {
-    const { category, name, price, stock, code } = newProduct;
-    
-    if (!category || !name || !price || !stock || !code) {
-      alert('⚠️ Por favor, completa todos los campos');
-      return;
-    }
-
-    if (parseFloat(price) <= 0) {
-      alert('⚠️ El precio debe ser mayor a 0');
-      return;
-    }
-
-    if (parseInt(stock) < 0) {
-      alert('⚠️ El stock no puede ser negativo');
-      return;
-    }
-    
-    const product = {
-      code: code,
-      name: name,
-      price: parseFloat(price),
-      stock: parseInt(stock)
-    };
-    
-    setProductInventory(prev => {
-      const newInventory = { ...prev };
-      if (!newInventory[category]) {
-        newInventory[category] = [];
-      }
-      newInventory[category].push(product);
-      return newInventory;
-    });
-    
-    setShowAddProductModal(false);
-    showSuccess(`✅ Producto ${code} agregado exitosamente`);
-  };
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Categoría</label>
-          <select 
-            value={newProduct.category}
-            onChange={(e) => handleInputChange('category', e.target.value)}
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
-          >
-            <option value="">Seleccionar...</option>
-            {productCategories.map(cat => (
-              <option key={cat.value} value={cat.value}>{cat.name}</option>
-            ))}
-          </select>
-        </div>
-        
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Código (Automático)</label>
-          <input 
-            type="text"
-            value={newProduct.code}
-            readOnly
-            placeholder="Se genera automáticamente"
-            className="w-full p-3 border-2 border-gray-200 rounded-lg bg-gray-100"
-          />
-        </div>
-        
-        <div className="md:col-span-2">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Nombre del Producto</label>
-          <input 
-            type="text"
-            value={newProduct.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-            placeholder="Ej: Gel Fijación Ultra"
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Precio</label>
-          <input 
-            type="number"
-            step="1"
-            value={newProduct.price}
-            onChange={(e) => handleInputChange('price', e.target.value)}
-            placeholder="0"
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
-          />
-        </div>
-        
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">Stock Inicial</label>
-          <input 
-            type="number"
-            min="0"
-            value={newProduct.stock}
-            onChange={(e) => handleInputChange('stock', e.target.value)}
-            placeholder="0"
-            className="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none"
-          />
-        </div>
-      </div>
-      
-      <div className="flex gap-4 mt-6">
-        <button 
-          onClick={saveNewProduct}
-          className="text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300"
-          style={{background: 'linear-gradient(135deg, #444b1d 0%, #5a6123 100%)'}}
-        >
-          💾 Guardar Producto
-        </button>
-        <button 
-          onClick={() => setShowAddProductModal(false)}
-          className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-red-600 hover:to-red-700 transition-all duration-300"
-        >
-          ❌ Cancelar
-        </button>
-      </div>
     </div>
   );
 };
