@@ -97,6 +97,23 @@ function setupEventListeners() {
     document.getElementById('productPrice').addEventListener('input', calculateTotal);
 }
 
+// Actualizar opciones de categoría según el tipo
+function updateCategoryOptions() {
+    const type = document.getElementById('type').value;
+    const categorySelect = document.getElementById('category');
+    
+    categorySelect.innerHTML = '<option value="">Seleccionar categoría...</option>';
+    
+    if (type && categories[type]) {
+        categories[type].forEach(category => {
+            const option = document.createElement('option');
+            option.value = category;
+            option.textContent = category;
+            categorySelect.appendChild(option);
+        });
+    }
+}
+
 // Manejar cambio de categoría para mostrar/ocultar inventario
 function handleCategoryChange() {
     const category = document.getElementById('category').value;
@@ -174,318 +191,6 @@ function calculateTotal() {
     
     document.getElementById('totalPrice').value = total.toFixed(2);
     document.getElementById('amount').value = total.toFixed(2);
-}
-
-// Agregar nuevo producto al inventario
-function addNewProduct() {
-    const modal = document.createElement('div');
-    modal.className = 'inventory-modal';
-    modal.innerHTML = `
-        <div class="inventory-modal-content">
-            <h3 style="color: #2c3e50; margin-bottom: 20px;">➕ Agregar Nuevo Producto</h3>
-            <div class="product-grid">
-                <div class="input-group">
-                    <label for="newProductCategory">Categoría</label>
-                    <select id="newProductCategory">
-                        <option value="">Seleccionar...</option>
-                        <option value="capilar">💇‍♂️ Capilar</option>
-                        <option value="barba">🧔 Barba</option>
-                        <option value="facial">👨‍🦲 Facial</option>
-                        <option value="maquinas">🔧 Máquinas</option>
-                        <option value="insumos">📦 Insumos Barbería</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label for="newProductName">Nombre del Producto</label>
-                    <input type="text" id="newProductName" placeholder="Ej: Cera Inmortal">
-                </div>
-                <div class="input-group">
-                    <label for="newProductPrice">Precio</label>
-                    <input type="number" id="newProductPrice" step="0.01" placeholder="0.00">
-                </div>
-                <div class="input-group">
-                    <label for="newProductStock">Stock Inicial</label>
-                    <input type="number" id="newProductStock" min="0" placeholder="0">
-                </div>
-                <div class="input-group">
-                    <label for="newProductCode">Código (Automático)</label>
-                    <input type="text" id="newProductCode" placeholder="Se genera automáticamente" readonly>
-                </div>
-            </div>
-            <div class="product-actions">
-                <button class="btn btn-primary" onclick="saveNewProduct()">💾 Guardar Producto</button>
-                <button class="btn btn-danger" onclick="closeModal()">❌ Cancelar</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    
-    // Generar código automático cuando se selecciona categoría
-    document.getElementById('newProductCategory').addEventListener('change', function() {
-        const category = this.value;
-        if (category) {
-            const code = generateProductCode(category);
-            document.getElementById('newProductCode').value = code;
-        }
-    });
-}
-
-// Generar código automático para producto
-function generateProductCode(category) {
-    const prefixes = {
-        capilar: 'C',
-        barba: 'B',
-        facial: 'F',
-        maquinas: 'M',
-        insumos: 'I'
-    };
-    
-    const categoryNames = {
-        capilar: ['CI', 'CB', 'CPI', 'CPR', 'SI'], // Códigos base existentes
-        barba: ['MK', 'AR', 'AI', 'CBI', 'SBI', 'CRI', 'DR'],
-        facial: ['EI', 'EO', 'MN', 'ASC'],
-        maquinas: ['TN', 'PK'],
-        insumos: ['CU', 'AS', 'ASP', 'SG', 'SGP', 'CD', 'CL', 'TB']
-    };
-    
-    const existingCodes = productInventory[category] ? productInventory[category].map(p => p.code) : [];
-    
-    // Intentar usar un prefijo existente de la categoría
-    if (categoryNames[category]) {
-        for (let prefix of categoryNames[category]) {
-            let number = 1;
-            let code;
-            
-            do {
-                code = `${prefix}${number.toString().padStart(3, '0')}`;
-                number++;
-            } while (existingCodes.includes(code));
-            
-            if (number <= 999) { // Evitar códigos muy largos
-                return code;
-            }
-        }
-    }
-    
-    // Si no se puede usar un prefijo existente, usar el prefijo general
-    const prefix = prefixes[category] || 'PRD';
-    let number = 1;
-    let code;
-    
-    do {
-        code = `${prefix}${number.toString().padStart(3, '0')}`;
-        number++;
-    } while (existingCodes.includes(code));
-    
-    return code;
-}
-
-// Guardar nuevo producto
-function saveNewProduct() {
-    const category = document.getElementById('newProductCategory').value;
-    const name = document.getElementById('newProductName').value;
-    const price = parseFloat(document.getElementById('newProductPrice').value);
-    const stock = parseInt(document.getElementById('newProductStock').value);
-    const code = document.getElementById('newProductCode').value;
-    
-    if (!category || !name || !price || !stock || !code) {
-        alert('⚠️ Por favor, completa todos los campos');
-        return;
-    }
-    
-    const newProduct = {
-        code: code,
-        name: name,
-        price: price,
-        stock: stock
-    };
-    
-    if (!productInventory[category]) {
-        productInventory[category] = [];
-    }
-    
-    productInventory[category].push(newProduct);
-    saveProductInventory();
-    closeModal();
-    updateProductOptions(); // Actualizar opciones si está en la misma categoría
-    showSuccessMessage(`✅ Producto ${code} agregado exitosamente`);
-}
-
-// Ver inventario completo
-function viewInventory() {
-    const modal = document.createElement('div');
-    modal.className = 'inventory-modal';
-    
-    let inventoryHTML = `
-        <div class="inventory-modal-content" style="max-width: 95%; max-height: 90%;">
-            <h3 style="color: #2c3e50; margin-bottom: 20px;">📦 Inventario Completo de Productos</h3>
-            <div style="overflow-x: auto;">
-                <table class="inventory-table">
-                    <thead>
-                        <tr>
-                            <th>Código</th>
-                            <th>Categoría</th>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Stock</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-    `;
-    
-    Object.keys(productInventory).forEach(category => {
-        productInventory[category].forEach(product => {
-            const stockClass = product.stock <= 5 ? 'stock-low' : 
-                             product.stock <= 10 ? 'stock-medium' : 'stock-high';
-            const stockStatus = product.stock <= 5 ? '🔴 Crítico' : 
-                              product.stock <= 10 ? '🟡 Bajo' : '🟢 Normal';
-            
-            inventoryHTML += `
-                <tr>
-                    <td><strong>${product.code}</strong></td>
-                    <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
-                    <td>${product.name}</td>
-                    <td>${product.price.toFixed(2)}</td>
-                    <td class="${stockClass}">${product.stock}</td>
-                    <td>${stockStatus}</td>
-                    <td>
-                        <button class="btn btn-info" style="padding: 4px 8px; font-size: 12px;" 
-                                onclick="editProductStock('${category}', '${product.code}')">
-                            📝 Stock
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-    });
-    
-    inventoryHTML += `
-                    </tbody>
-                </table>
-            </div>
-            <div class="product-actions" style="margin-top: 20px;">
-                <button class="btn btn-primary" onclick="exportInventory()">📊 Exportar Inventario</button>
-                <button class="btn btn-danger" onclick="closeModal()">❌ Cerrar</button>
-            </div>
-        </div>
-    `;
-    
-    modal.innerHTML = inventoryHTML;
-    document.body.appendChild(modal);
-}
-
-// Editar stock de producto
-function editProductStock(category, code) {
-    const product = productInventory[category].find(p => p.code === code);
-    if (!product) return;
-    
-    const newStock = prompt(`Actualizar stock para ${product.name} (${code})\nStock actual: ${product.stock}`, product.stock);
-    
-    if (newStock !== null && !isNaN(newStock) && parseInt(newStock) >= 0) {
-        product.stock = parseInt(newStock);
-        saveProductInventory();
-        showSuccessMessage(`✅ Stock actualizado para ${code}`);
-        // Refrescar vista del inventario
-        closeModal();
-        setTimeout(() => viewInventory(), 100);
-    }
-}
-
-// Exportar inventario
-function exportInventory() {
-    const headers = ['Código', 'Categoría', 'Producto', 'Precio', 'Stock', 'Estado'];
-    let csvContent = headers.join(',') + '\n';
-    
-    Object.keys(productInventory).forEach(category => {
-        productInventory[category].forEach(product => {
-            const stockStatus = product.stock <= 5 ? 'Crítico' : 
-                              product.stock <= 10 ? 'Bajo' : 'Normal';
-            
-            csvContent += [
-                product.code,
-                category.charAt(0).toUpperCase() + category.slice(1),
-                `"${product.name}"`,
-                product.price,
-                product.stock,
-                stockStatus
-            ].join(',') + '\n';
-        });
-    });
-    
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    link.setAttribute('download', `inventario_productos_${new Date().toISOString().split('T')[0]}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    showSuccessMessage('📊 Inventario exportado exitosamente');
-}
-
-// Cerrar modal
-function closeModal() {
-    const modal = document.querySelector('.inventory-modal');
-    if (modal) {
-        modal.remove();
-    }
-}
-
-// Cerrar modal al hacer clic fuera
-document.addEventListener('click', function(event) {
-    if (event.target.classList.contains('inventory-modal')) {
-        closeModal();
-    }
-});
-
-// Cerrar modal con tecla Escape
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape') {
-        closeModal();
-    }
-});
-
-// Guardar inventario en localStorage
-function saveProductInventory() {
-    try {
-        localStorage.setItem('productInventory', JSON.stringify(productInventory));
-    } catch (error) {
-        console.warn('No se pudo guardar el inventario:', error);
-    }
-}
-
-// Cargar inventario desde localStorage
-function loadProductInventory() {
-    try {
-        const savedInventory = localStorage.getItem('productInventory');
-        if (savedInventory) {
-            productInventory = JSON.parse(savedInventory);
-        }
-    } catch (error) {
-        console.warn('No se pudo cargar el inventario:', error);
-    }
-}
-
-// Actualizar opciones de categoría según el tipo
-function updateCategoryOptions() {
-    const type = document.getElementById('type').value;
-    const categorySelect = document.getElementById('category');
-    
-    categorySelect.innerHTML = '<option value="">Seleccionar categoría...</option>';
-    
-    if (type && categories[type]) {
-        categories[type].forEach(category => {
-            const option = document.createElement('option');
-            option.value = category;
-            option.textContent = category;
-            categorySelect.appendChild(option);
-        });
-    }
 }
 
 // Agregar transacción
@@ -684,7 +389,7 @@ function displayTransactions() {
             // Agregar información de producto si es una venta
             let description = transaction.description;
             if (transaction.category === 'Ventas' && transaction.productInfo) {
-                description += ` | Qty: ${transaction.productInfo.quantity} | ${transaction.productInfo.unitPrice}/u`;
+                description += ` | Qty: ${transaction.productInfo.quantity} | $${transaction.productInfo.unitPrice}/u`;
             }
             
             return `
@@ -693,7 +398,7 @@ function displayTransactions() {
                     <td>${typeIcon} ${typeText}</td>
                     <td>${transaction.category}</td>
                     <td>${description}</td>
-                    <td class="${amountClass}">${amountPrefix}${transaction.amount.toFixed(2)}</td>
+                    <td class="${amountClass}">${amountPrefix}$${transaction.amount.toFixed(2)}</td>
                     <td>
                         <button class="btn btn-primary" onclick="editTransaction(${transaction.id})" style="margin-right: 5px; padding: 6px 10px; font-size: 11px;">
                             ✏️ Editar
@@ -851,6 +556,301 @@ function importFromCSV(event) {
     
     reader.readAsText(file);
     event.target.value = ''; // Limpiar el input
+}
+
+// Agregar nuevo producto al inventario
+function addNewProduct() {
+    const modal = document.createElement('div');
+    modal.className = 'inventory-modal';
+    modal.innerHTML = `
+        <div class="inventory-modal-content">
+            <h3 style="color: #2c3e50; margin-bottom: 20px;">➕ Agregar Nuevo Producto</h3>
+            <div class="product-grid">
+                <div class="input-group">
+                    <label for="newProductCategory">Categoría</label>
+                    <select id="newProductCategory">
+                        <option value="">Seleccionar...</option>
+                        <option value="capilar">💇‍♂️ Capilar</option>
+                        <option value="barba">🧔 Barba</option>
+                        <option value="facial">👨‍🦲 Facial</option>
+                        <option value="maquinas">🔧 Máquinas</option>
+                        <option value="insumos">📦 Insumos Barbería</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="newProductName">Nombre del Producto</label>
+                    <input type="text" id="newProductName" placeholder="Ej: Cera Inmortal">
+                </div>
+                <div class="input-group">
+                    <label for="newProductPrice">Precio</label>
+                    <input type="number" id="newProductPrice" step="0.01" placeholder="0.00">
+                </div>
+                <div class="input-group">
+                    <label for="newProductStock">Stock Inicial</label>
+                    <input type="number" id="newProductStock" min="0" placeholder="0">
+                </div>
+                <div class="input-group">
+                    <label for="newProductCode">Código (Automático)</label>
+                    <input type="text" id="newProductCode" placeholder="Se genera automáticamente" readonly>
+                </div>
+            </div>
+            <div class="product-actions">
+                <button class="btn btn-primary" onclick="saveNewProduct()">💾 Guardar Producto</button>
+                <button class="btn btn-danger" onclick="closeModal()">❌ Cancelar</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Generar código automático cuando se selecciona categoría
+    document.getElementById('newProductCategory').addEventListener('change', function() {
+        const category = this.value;
+        if (category) {
+            const code = generateProductCode(category);
+            document.getElementById('newProductCode').value = code;
+        }
+    });
+}
+
+// Generar código automático para producto
+function generateProductCode(category) {
+    const prefixes = {
+        capilar: 'C',
+        barba: 'B',
+        facial: 'F',
+        maquinas: 'M',
+        insumos: 'I'
+    };
+    
+    const categoryNames = {
+        capilar: ['CI', 'CB', 'CPI', 'CPR', 'SI'], // Códigos base existentes
+        barba: ['MK', 'AR', 'AI', 'CBI', 'SBI', 'CRI', 'DR'],
+        facial: ['EI', 'EO', 'MN', 'ASC'],
+        maquinas: ['TN', 'PK'],
+        insumos: ['CU', 'AS', 'ASP', 'SG', 'SGP', 'CD', 'CL', 'TB']
+    };
+    
+    const existingCodes = productInventory[category] ? productInventory[category].map(p => p.code) : [];
+    
+    // Intentar usar un prefijo existente de la categoría
+    if (categoryNames[category]) {
+        for (let prefix of categoryNames[category]) {
+            let number = 1;
+            let code;
+            
+            do {
+                code = `${prefix}${number.toString().padStart(3, '0')}`;
+                number++;
+            } while (existingCodes.includes(code));
+            
+            if (number <= 999) { // Evitar códigos muy largos
+                return code;
+            }
+        }
+    }
+    
+    // Si no se puede usar un prefijo existente, usar el prefijo general
+    const prefix = prefixes[category] || 'PRD';
+    let number = 1;
+    let code;
+    
+    do {
+        code = `${prefix}${number.toString().padStart(3, '0')}`;
+        number++;
+    } while (existingCodes.includes(code));
+    
+    return code;
+}
+
+// Guardar nuevo producto
+function saveNewProduct() {
+    const category = document.getElementById('newProductCategory').value;
+    const name = document.getElementById('newProductName').value;
+    const price = parseFloat(document.getElementById('newProductPrice').value);
+    const stock = parseInt(document.getElementById('newProductStock').value);
+    const code = document.getElementById('newProductCode').value;
+    
+    if (!category || !name || !price || !stock || !code) {
+        alert('⚠️ Por favor, completa todos los campos');
+        return;
+    }
+    
+    const newProduct = {
+        code: code,
+        name: name,
+        price: price,
+        stock: stock
+    };
+    
+    if (!productInventory[category]) {
+        productInventory[category] = [];
+    }
+    
+    productInventory[category].push(newProduct);
+    saveProductInventory();
+    closeModal();
+    updateProductOptions(); // Actualizar opciones si está en la misma categoría
+    showSuccessMessage(`✅ Producto ${code} agregado exitosamente`);
+}
+
+// Ver inventario completo
+function viewInventory() {
+    const modal = document.createElement('div');
+    modal.className = 'inventory-modal';
+    
+    let inventoryHTML = `
+        <div class="inventory-modal-content" style="max-width: 95%; max-height: 90%;">
+            <h3 style="color: #2c3e50; margin-bottom: 20px;">📦 Inventario de Productos de Barbería</h3>
+            <div style="overflow-x: auto;">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Categoría</th>
+                            <th>Producto</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+    `;
+    
+    Object.keys(productInventory).forEach(category => {
+        productInventory[category].forEach(product => {
+            const stockClass = product.stock <= 5 ? 'stock-low' : 
+                             product.stock <= 10 ? 'stock-medium' : 'stock-high';
+            const stockStatus = product.stock <= 5 ? '🔴 Crítico' : 
+                              product.stock <= 10 ? '🟡 Bajo' : '🟢 Normal';
+            
+            inventoryHTML += `
+                <tr>
+                    <td><strong>${product.code}</strong></td>
+                    <td>${category.charAt(0).toUpperCase() + category.slice(1)}</td>
+                    <td>${product.name}</td>
+                    <td>$${product.price.toFixed(2)}</td>
+                    <td class="${stockClass}">${product.stock}</td>
+                    <td>${stockStatus}</td>
+                    <td>
+                        <button class="btn btn-info" style="padding: 4px 8px; font-size: 12px;" 
+                                onclick="editProductStock('${category}', '${product.code}')">
+                            📝 Stock
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    });
+    
+    inventoryHTML += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="product-actions" style="margin-top: 20px;">
+                <button class="btn btn-primary" onclick="exportInventory()">📊 Exportar Inventario</button>
+                <button class="btn btn-danger" onclick="closeModal()">❌ Cerrar</button>
+            </div>
+        </div>
+    `;
+    
+    modal.innerHTML = inventoryHTML;
+    document.body.appendChild(modal);
+}
+
+// Editar stock de producto
+function editProductStock(category, code) {
+    const product = productInventory[category].find(p => p.code === code);
+    if (!product) return;
+    
+    const newStock = prompt(`Actualizar stock para ${product.name} (${code})\nStock actual: ${product.stock}`, product.stock);
+    
+    if (newStock !== null && !isNaN(newStock) && parseInt(newStock) >= 0) {
+        product.stock = parseInt(newStock);
+        saveProductInventory();
+        showSuccessMessage(`✅ Stock actualizado para ${code}`);
+        // Refrescar vista del inventario
+        closeModal();
+        setTimeout(() => viewInventory(), 100);
+    }
+}
+
+// Exportar inventario
+function exportInventory() {
+    const headers = ['Código', 'Categoría', 'Producto', 'Precio', 'Stock', 'Estado'];
+    let csvContent = headers.join(',') + '\n';
+    
+    Object.keys(productInventory).forEach(category => {
+        productInventory[category].forEach(product => {
+            const stockStatus = product.stock <= 5 ? 'Crítico' : 
+                              product.stock <= 10 ? 'Bajo' : 'Normal';
+            
+            csvContent += [
+                product.code,
+                category.charAt(0).toUpperCase() + category.slice(1),
+                `"${product.name}"`,
+                product.price,
+                product.stock,
+                stockStatus
+            ].join(',') + '\n';
+        });
+    });
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `inventario_productos_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    showSuccessMessage('📊 Inventario exportado exitosamente');
+}
+
+// Cerrar modal
+function closeModal() {
+    const modal = document.querySelector('.inventory-modal');
+    if (modal) {
+        modal.remove();
+    }
+}
+
+// Cerrar modal al hacer clic fuera
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('inventory-modal')) {
+        closeModal();
+    }
+});
+
+// Cerrar modal con tecla Escape
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        closeModal();
+    }
+});
+
+// Guardar inventario en localStorage
+function saveProductInventory() {
+    try {
+        localStorage.setItem('productInventory', JSON.stringify(productInventory));
+    } catch (error) {
+        console.warn('No se pudo guardar el inventario:', error);
+    }
+}
+
+// Cargar inventario desde localStorage
+function loadProductInventory() {
+    try {
+        const savedInventory = localStorage.getItem('productInventory');
+        if (savedInventory) {
+            productInventory = JSON.parse(savedInventory);
+        }
+    } catch (error) {
+        console.warn('No se pudo cargar el inventario:', error);
+    }
 }
 
 // Inicializar cuando la página cargue
