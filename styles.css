@@ -6,7 +6,7 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #000000; /* Fondo negro */
     min-height: 100vh;
     padding: 20px;
 }
@@ -16,12 +16,12 @@ body {
     margin: 0 auto;
     background: white;
     border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3); /* Sombra más intensa para contraste con fondo negro */
     overflow: hidden;
 }
 
 .header {
-    background: linear-gradient(135deg, #2c3e50, #3498db);
+    background: linear-gradient(135deg, #444b1d 0%, #5a6123 50%, #3a4019 100%); /* Color principal */
     color: white;
     padding: 30px;
     text-align: center;
@@ -43,7 +43,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     padding: 30px;
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #f4f5f0 0%, #e8eadf 100%); /* Fondo suave complementario */
 }
 
 .card {
@@ -60,7 +60,7 @@ body {
 }
 
 .card.income {
-    border-left-color: #27ae60;
+    border-left-color: #444b1d; /* Color principal para ingresos */
 }
 
 .card.expense {
@@ -68,7 +68,7 @@ body {
 }
 
 .card.balance {
-    border-left-color: #3498db;
+    border-left-color: #6b7529; /* Tono más claro del color principal */
 }
 
 .card h3 {
@@ -84,7 +84,7 @@ body {
 }
 
 .card.income .amount {
-    color: #27ae60;
+    color: #444b1d; /* Color principal para montos de ingresos */
 }
 
 .card.expense .amount {
@@ -92,7 +92,7 @@ body {
 }
 
 .card.balance .amount {
-    color: #3498db;
+    color: #444b1d; /* Color principal para balance positivo */
 }
 
 .input-section {
@@ -129,7 +129,7 @@ body {
 
 .input-group input:focus, .input-group select:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #444b1d; /* Color principal para focus */
 }
 
 .btn {
@@ -145,13 +145,14 @@ body {
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, #3498db, #2980b9);
+    background: linear-gradient(135deg, #444b1d, #5a6123); /* Color principal */
     color: white;
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+    box-shadow: 0 5px 15px rgba(68, 75, 29, 0.4);
+    background: linear-gradient(135deg, #5a6123, #6b7529);
 }
 
 .btn-danger {
@@ -184,7 +185,7 @@ table {
 }
 
 th {
-    background: linear-gradient(135deg, #34495e, #2c3e50);
+    background: linear-gradient(135deg, #444b1d, #3a4019); /* Color principal para headers */
     color: white;
     padding: 15px 10px;
     text-align: left;
@@ -205,7 +206,7 @@ tr:hover td {
 }
 
 .income-row {
-    border-left: 4px solid #27ae60;
+    border-left: 4px solid #444b1d; /* Color principal para filas de ingresos */
 }
 
 .expense-row {
@@ -213,7 +214,7 @@ tr:hover td {
 }
 
 .amount-positive {
-    color: #27ae60;
+    color: #444b1d; /* Color principal para montos positivos */
     font-weight: bold;
 }
 
@@ -230,9 +231,13 @@ tr:hover td {
     align-items: center;
 }
 
+.filters-section {
+    background: linear-gradient(135deg, #f4f5f0 0%, #e8eadf 100%); /* Fondo complementario */
+}
+
 .export-section {
     padding: 20px 30px;
-    background: #f8f9fa;
+    background: linear-gradient(135deg, #f4f5f0 0%, #e8eadf 100%); /* Fondo complementario */
     border-top: 1px solid #eee;
     text-align: center;
 }
@@ -254,7 +259,7 @@ tr:hover td {
     position: fixed;
     top: 20px;
     right: 20px;
-    background: #27ae60;
+    background: #444b1d; /* Color principal para mensajes de éxito */
     color: white;
     padding: 15px 25px;
     border-radius: 8px;
@@ -312,7 +317,7 @@ tr:hover td {
 
 /* Estilos para Inventario de Productos */
 .product-inventory-container {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    background: linear-gradient(135deg, #f4f5f0, #e8eadf); /* Fondo complementario */
     border: 2px solid #dee2e6;
     border-radius: 12px;
     padding: 20px;
@@ -344,13 +349,13 @@ tr:hover td {
 }
 
 .btn-info {
-    background: linear-gradient(135deg, #17a2b8, #138496);
+    background: linear-gradient(135deg, #444b1d, #5a6123); /* Color principal para botones info */
     color: white;
 }
 
 .btn-info:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(23, 162, 184, 0.4);
+    box-shadow: 0 5px 15px rgba(68, 75, 29, 0.4);
 }
 
 .inventory-modal {
@@ -359,7 +364,7 @@ tr:hover td {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.7); /* Fondo más oscuro para contraste */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -373,7 +378,7 @@ tr:hover td {
     max-width: 90%;
     max-height: 90%;
     overflow-y: auto;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5); /* Sombra más intensa */
 }
 
 .inventory-table {
@@ -390,7 +395,7 @@ tr:hover td {
 }
 
 .inventory-table th {
-    background: linear-gradient(135deg, #495057, #343a40);
+    background: linear-gradient(135deg, #444b1d, #3a4019); /* Color principal */
     color: white;
     font-weight: 600;
 }
@@ -400,7 +405,7 @@ tr:hover td {
 }
 
 .stock-high {
-    color: #28a745;
+    color: #444b1d; /* Color principal para stock alto */
     font-weight: bold;
 }
 
@@ -412,4 +417,33 @@ tr:hover td {
 .stock-low {
     color: #dc3545;
     font-weight: bold;
+}
+
+/* Estilos adicionales para botones con color principal */
+.btn-main {
+    background: linear-gradient(135deg, #444b1d, #5a6123);
+    color: white;
+}
+
+.btn-main:hover {
+    background: linear-gradient(135deg, #5a6123, #6b7529);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(68, 75, 29, 0.4);
+}
+
+/* Estilos para elementos con tema principal */
+.theme-border {
+    border-color: #444b1d !important;
+}
+
+.theme-bg {
+    background-color: #444b1d !important;
+}
+
+.theme-text {
+    color: #444b1d !important;
+}
+
+.theme-gradient {
+    background: linear-gradient(135deg, #444b1d, #5a6123) !important;
 }
