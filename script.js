@@ -11,77 +11,43 @@ const categories = {
     ]
 };
 
-// Base de datos de productos de belleza capilar
+// Base de datos de productos de barbería y belleza
 let productInventory = {
-    gel: [
-        { code: 'GEL01', name: 'Gel Fijación Extra Fuerte', price: 15.99, stock: 25 },
-        { code: 'GEL02', name: 'Gel Modelador Natural', price: 12.50, stock: 30 },
-        { code: 'GEL03', name: 'Gel Brillo Intenso', price: 18.75, stock: 15 },
-        { code: 'GEL04', name: 'Gel Sin Alcohol', price: 14.25, stock: 20 },
-        { code: 'GEL05', name: 'Gel Rizos Definidos', price: 16.80, stock: 18 }
+    capilar: [
+        { code: 'CI001', name: 'Cera Inmortal', price: 25.99, stock: 20 },
+        { code: 'CB001', name: 'Cera Mr. Buff', price: 22.50, stock: 15 },
+        { code: 'CPI001', name: 'Cera en Polvo Inmortal', price: 28.75, stock: 12 },
+        { code: 'CPR001', name: 'Cera en Polvo Roterbart', price: 26.99, stock: 18 },
+        { code: 'SI001', name: 'Shampoo Inmortal', price: 19.99, stock: 25 }
     ],
-    shampoo: [
-        { code: 'SHP01', name: 'Shampoo Hidratante Intensivo', price: 22.99, stock: 40 },
-        { code: 'SHP02', name: 'Shampoo Anti-Caspa', price: 19.50, stock: 35 },
-        { code: 'SHP03', name: 'Shampoo Cabello Graso', price: 18.75, stock: 25 },
-        { code: 'SHP04', name: 'Shampoo Bebé Suave', price: 16.25, stock: 50 },
-        { code: 'SHP05', name: 'Shampoo Matizador Rubio', price: 28.90, stock: 20 }
+    barba: [
+        { code: 'MK001', name: 'Minoxidil Kirkland', price: 45.99, stock: 8 },
+        { code: 'AR001', name: 'Aceite Barba Roterbart', price: 32.50, stock: 15 },
+        { code: 'AI001', name: 'Aceite Barba Inmortal', price: 35.75, stock: 12 },
+        { code: 'CBI001', name: 'Cera Barba Inmortal', price: 24.99, stock: 20 },
+        { code: 'SBI001', name: 'Shampoo Barba Inmortal', price: 21.50, stock: 18 },
+        { code: 'CRI001', name: 'Crema Barba Inmortal', price: 28.99, stock: 14 },
+        { code: 'DR001', name: 'Derma Roller', price: 15.99, stock: 10 }
     ],
-    acondicionador: [
-        { code: 'ACD01', name: 'Acondicionador Reparador', price: 20.99, stock: 30 },
-        { code: 'ACD02', name: 'Acondicionador Sin Enjuague', price: 24.50, stock: 25 },
-        { code: 'ACD03', name: 'Acondicionador Volumen', price: 18.75, stock: 28 },
-        { code: 'ACD04', name: 'Acondicionador Rizos', price: 22.80, stock: 22 },
-        { code: 'ACD05', name: 'Acondicionador Desenredante', price: 19.99, stock: 35 }
+    facial: [
+        { code: 'EI001', name: 'Exfoliante Inmortal', price: 18.99, stock: 22 },
+        { code: 'EO001', name: 'Exfoliante Ossion', price: 16.50, stock: 25 },
+        { code: 'MN001', name: 'Mascarilla Negra Nevada', price: 24.75, stock: 16 },
+        { code: 'ASC001', name: 'After Shave Crema Red One', price: 19.99, stock: 20 }
     ],
-    mascarilla: [
-        { code: 'MSC01', name: 'Mascarilla Hidratación Profunda', price: 32.99, stock: 15 },
-        { code: 'MSC02', name: 'Mascarilla Reconstrucción', price: 38.50, stock: 12 },
-        { code: 'MSC03', name: 'Mascarilla Nutrición Intensa', price: 29.75, stock: 18 },
-        { code: 'MSC04', name: 'Mascarilla Cabello Teñido', price: 34.25, stock: 14 },
-        { code: 'MSC05', name: 'Mascarilla Anti-Edad', price: 42.90, stock: 10 }
+    maquinas: [
+        { code: 'TN001', name: 'Trimmer Nariz', price: 12.99, stock: 8 },
+        { code: 'PK001', name: 'Patillera Kemei', price: 35.50, stock: 6 }
     ],
-    tratamiento: [
-        { code: 'TRT01', name: 'Tratamiento Keratina', price: 85.99, stock: 8 },
-        { code: 'TRT02', name: 'Tratamiento Botox Capilar', price: 95.50, stock: 6 },
-        { code: 'TRT03', name: 'Tratamiento Anti-Caída', price: 68.75, stock: 12 },
-        { code: 'TRT04', name: 'Tratamiento Crecimiento', price: 72.80, stock: 10 },
-        { code: 'TRT05', name: 'Tratamiento Reparación Extrema', price: 89.99, stock: 7 }
-    ],
-    spray: [
-        { code: 'SPR01', name: 'Spray Protector Térmico', price: 26.99, stock: 22 },
-        { code: 'SPR02', name: 'Spray Brillo Instantáneo', price: 19.50, stock: 30 },
-        { code: 'SPR03', name: 'Spray Volumen Raíces', price: 24.75, stock: 25 },
-        { code: 'SPR04', name: 'Spray Desenredante', price: 18.25, stock: 28 },
-        { code: 'SPR05', name: 'Spray Fijador Flexible', price: 22.80, stock: 20 }
-    ],
-    serum: [
-        { code: 'SER01', name: 'Serum Puntas Abiertas', price: 34.99, stock: 16 },
-        { code: 'SER02', name: 'Serum Crecimiento Rápido', price: 48.50, stock: 12 },
-        { code: 'SER03', name: 'Serum Brillo Diamante', price: 29.75, stock: 18 },
-        { code: 'SER04', name: 'Serum Anti-Frizz', price: 32.25, stock: 15 },
-        { code: 'SER05', name: 'Serum Nutrición Nocturna', price: 42.90, stock: 10 }
-    ],
-    aceite: [
-        { code: 'ACE01', name: 'Aceite Argán Puro', price: 45.99, stock: 14 },
-        { code: 'ACE02', name: 'Aceite Coco Virgen', price: 28.50, stock: 20 },
-        { code: 'ACE03', name: 'Aceite Jojoba Natural', price: 38.75, stock: 16 },
-        { code: 'ACE04', name: 'Aceite Ricino Fortalecedor', price: 22.25, stock: 25 },
-        { code: 'ACE05', name: 'Aceite Mezcla 7 Aceites', price: 52.90, stock: 8 }
-    ],
-    mousse: [
-        { code: 'MOU01', name: 'Mousse Volumen Extremo', price: 24.99, stock: 20 },
-        { code: 'MOU02', name: 'Mousse Rizos Naturales', price: 26.50, stock: 18 },
-        { code: 'MOU03', name: 'Mousse Fijación Media', price: 22.75, stock: 22 },
-        { code: 'MOU04', name: 'Mousse Cabello Fino', price: 28.25, stock: 15 },
-        { code: 'MOU05', name: 'Mousse Hidratante', price: 25.80, stock: 19 }
-    ],
-    cera: [
-        { code: 'CER01', name: 'Cera Modeladora Mate', price: 18.99, stock: 25 },
-        { code: 'CER02', name: 'Cera Brillo Natural', price: 20.50, stock: 22 },
-        { code: 'CER03', name: 'Cera Fijación Extrema', price: 24.75, stock: 18 },
-        { code: 'CER04', name: 'Cera Texturizante', price: 22.25, stock: 20 },
-        { code: 'CER05', name: 'Cera Moldeadora Flexible', price: 19.80, stock: 24 }
+    insumos: [
+        { code: 'CU001', name: 'Cuelloros', price: 2.99, stock: 50 },
+        { code: 'AS001', name: 'After Shave', price: 14.99, stock: 30 },
+        { code: 'ASP001', name: 'After Shave Pequeño', price: 8.50, stock: 40 },
+        { code: 'SG001', name: 'Shaving Gel', price: 12.75, stock: 25 },
+        { code: 'SGP001', name: 'Shaving Gel Pequeño', price: 7.99, stock: 35 },
+        { code: 'CD001', name: 'Cuchillas Dórco', price: 9.99, stock: 45 },
+        { code: 'CL001', name: 'Cuchillas Level 3', price: 11.50, stock: 38 },
+        { code: 'TB001', name: 'Talco Mr Buffel', price: 6.99, stock: 42 }
     ]
 };
 
@@ -222,21 +188,16 @@ function addNewProduct() {
                     <label for="newProductCategory">Categoría</label>
                     <select id="newProductCategory">
                         <option value="">Seleccionar...</option>
-                        <option value="gel">Geles</option>
-                        <option value="shampoo">Shampoos</option>
-                        <option value="acondicionador">Acondicionadores</option>
-                        <option value="mascarilla">Mascarillas</option>
-                        <option value="tratamiento">Tratamientos</option>
-                        <option value="spray">Sprays</option>
-                        <option value="serum">Serums</option>
-                        <option value="aceite">Aceites</option>
-                        <option value="mousse">Mousse</option>
-                        <option value="cera">Ceras</option>
+                        <option value="capilar">💇‍♂️ Capilar</option>
+                        <option value="barba">🧔 Barba</option>
+                        <option value="facial">👨‍🦲 Facial</option>
+                        <option value="maquinas">🔧 Máquinas</option>
+                        <option value="insumos">📦 Insumos Barbería</option>
                     </select>
                 </div>
                 <div class="input-group">
                     <label for="newProductName">Nombre del Producto</label>
-                    <input type="text" id="newProductName" placeholder="Ej: Gel Fijación Ultra">
+                    <input type="text" id="newProductName" placeholder="Ej: Cera Inmortal">
                 </div>
                 <div class="input-group">
                     <label for="newProductPrice">Precio</label>
@@ -273,26 +234,47 @@ function addNewProduct() {
 // Generar código automático para producto
 function generateProductCode(category) {
     const prefixes = {
-        gel: 'GEL',
-        shampoo: 'SHP',
-        acondicionador: 'ACD',
-        mascarilla: 'MSC',
-        tratamiento: 'TRT',
-        spray: 'SPR',
-        serum: 'SER',
-        aceite: 'ACE',
-        mousse: 'MOU',
-        cera: 'CER'
+        capilar: 'C',
+        barba: 'B',
+        facial: 'F',
+        maquinas: 'M',
+        insumos: 'I'
     };
     
-    const prefix = prefixes[category] || 'PRD';
+    const categoryNames = {
+        capilar: ['CI', 'CB', 'CPI', 'CPR', 'SI'], // Códigos base existentes
+        barba: ['MK', 'AR', 'AI', 'CBI', 'SBI', 'CRI', 'DR'],
+        facial: ['EI', 'EO', 'MN', 'ASC'],
+        maquinas: ['TN', 'PK'],
+        insumos: ['CU', 'AS', 'ASP', 'SG', 'SGP', 'CD', 'CL', 'TB']
+    };
+    
     const existingCodes = productInventory[category] ? productInventory[category].map(p => p.code) : [];
     
+    // Intentar usar un prefijo existente de la categoría
+    if (categoryNames[category]) {
+        for (let prefix of categoryNames[category]) {
+            let number = 1;
+            let code;
+            
+            do {
+                code = `${prefix}${number.toString().padStart(3, '0')}`;
+                number++;
+            } while (existingCodes.includes(code));
+            
+            if (number <= 999) { // Evitar códigos muy largos
+                return code;
+            }
+        }
+    }
+    
+    // Si no se puede usar un prefijo existente, usar el prefijo general
+    const prefix = prefixes[category] || 'PRD';
     let number = 1;
     let code;
     
     do {
-        code = `${prefix}${number.toString().padStart(2, '0')}`;
+        code = `${prefix}${number.toString().padStart(3, '0')}`;
         number++;
     } while (existingCodes.includes(code));
     
