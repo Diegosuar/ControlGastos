@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control de Gastos e Ingresos - Barbería</title>
+    <title>Control de Gastos e Ingresos - Alpha Style</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Inventario Gastos e Ingresos-Alpha Style 🧔🏻 </h1>
-        
+            <h1>💼 Inventario Gastos e Ingresos - Alpha Style 💈</h1>
+            <p>Gestiona las finanzas de tu barbería de manera inteligente</p>
         </div>
 
         <div class="month-year-selector">
@@ -111,26 +111,34 @@
                             </div>
                             <div class="input-group">
                                 <label for="productPrice">Precio Unitario</label>
-                                <input type="number" id="productPrice" step="0.01" placeholder="0.00" readonly>
+                                <input type="number" id="productPrice" step="1" placeholder="0" readonly 
+                                       style="background-color: #f8f9fa;">
                             </div>
                             <div class="input-group">
                                 <label for="productCode">Código</label>
-                                <input type="text" id="productCode" placeholder="Código automático" readonly>
+                                <input type="text" id="productCode" placeholder="Código automático" readonly
+                                       style="background-color: #f8f9fa;">
                             </div>
                             <div class="input-group">
                                 <label for="totalPrice">Total</label>
-                                <input type="number" id="totalPrice" step="0.01" placeholder="0.00" readonly>
+                                <input type="number" id="totalPrice" step="1" placeholder="0" readonly
+                                       style="background-color: #f8f9fa; font-weight: bold; color: #444b1d;">
                             </div>
                         </div>
                         <div class="product-actions">
-                            <button type="button" class="btn btn-secondary" onclick="addNewProduct()">➕ Agregar Nuevo Producto</button>
-                            <button type="button" class="btn btn-info" onclick="viewInventory()">📦 Ver Inventario</button>
+                            <button type="button" class="btn btn-secondary" onclick="addNewProduct()">
+                                ➕ Agregar Nuevo Producto
+                            </button>
+                            <button type="button" class="btn btn-info" onclick="viewInventory()">
+                                📦 Ver Inventario
+                            </button>
                         </div>
                     </div>
                 </div>
+                
                 <div class="input-group">
                     <label for="amount">Monto ($)</label>
-                    <input type="number" id="amount" step="0.01" placeholder="0.00" required>
+                    <input type="number" id="amount" step="1" placeholder="0" required>
                 </div>
                 <div class="input-group" style="align-self: end;">
                     <button class="btn btn-primary" onclick="addTransaction()">Agregar Movimiento</button>
@@ -139,7 +147,7 @@
         </div>
 
         <div class="table-section">
-            <div class="filters">
+            <div class="filters filters-section" style="padding: 20px; background: linear-gradient(135deg, #f4f5f0 0%, #e8eadf 100%); border-radius: 10px; margin-bottom: 20px;">
                 <div class="input-group">
                     <label for="filterMonth">Filtrar por Mes</label>
                     <select id="filterMonth">
@@ -188,7 +196,7 @@
                     </thead>
                     <tbody id="transactionTable">
                         <tr>
-                            <td colspan="6" style="text-align: center; color: #444b1d; padding: 40px;">
+                            <td colspan="6" style="text-align: center; color: #444b1d; padding: 40px; font-weight: bold;">
                                 🎯 No hay movimientos registrados. ¡Agrega tu primer ingreso o gasto!
                             </td>
                         </tr>
@@ -200,6 +208,30 @@
         <div class="export-section">
             <h3 style="margin-bottom: 15px; color: #444b1d;">📊 Exportar Datos</h3>
             <button class="btn btn-primary" onclick="exportToCSV()">Descargar CSV</button>
+        </div>
+    </div>
+
+    <!-- Modal de Inventario (se generará dinámicamente) -->
+    <div id="inventoryModal" class="inventory-modal" style="display: none;">
+        <div class="inventory-modal-content">
+            <h3 style="color: #444b1d; margin-bottom: 20px;">📦 Inventario de Productos de Barbería</h3>
+            <div id="inventoryContent">
+                <!-- Contenido generado dinámicamente -->
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-main" onclick="exportInventory()">📊 Exportar Inventario</button>
+                <button class="btn btn-danger" onclick="closeInventoryModal()" style="margin-left: 10px;">❌ Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Agregar Producto (se generará dinámicamente) -->
+    <div id="addProductModal" class="inventory-modal" style="display: none;">
+        <div class="inventory-modal-content" style="max-width: 600px;">
+            <h3 style="color: #444b1d; margin-bottom: 20px;">➕ Agregar Nuevo Producto</h3>
+            <div id="addProductForm">
+                <!-- Formulario generado dinámicamente -->
+            </div>
         </div>
     </div>
 
