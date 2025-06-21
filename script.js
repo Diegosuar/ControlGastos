@@ -13,43 +13,43 @@ const categories = {
 
 // Base de datos de productos de barbería y belleza
 let productInventory = {
-    capilar: [
-        { code: 'CI001', name: 'Cera Inmortal', price: 25.99, stock: 20 },
-        { code: 'CB001', name: 'Cera Mr. Buff', price: 22.50, stock: 15 },
-        { code: 'CPI001', name: 'Cera en Polvo Inmortal', price: 28.75, stock: 12 },
-        { code: 'CPR001', name: 'Cera en Polvo Roterbart', price: 26.99, stock: 18 },
-        { code: 'SI001', name: 'Shampoo Inmortal', price: 19.99, stock: 25 }
+  capilar: [
+      { code: 'CI001', name: 'Cera Inmortal', price: 42000, stock: 20 },
+      { code: 'CB001', name: 'Cera Mr. Buff', price: 40000, stock: 12 },
+      { code: 'CPI001', name: 'Cera en Polvo Inmortal', price: 42000, stock: 3 },
+      { code: 'CPR001', name: 'Cera en Polvo Roterbart', price: 42000, stock: 3 },
+      { code: 'SI001', name: 'Shampoo Inmortal', price: 36000, stock: 2 }
     ],
     barba: [
-        { code: 'MK001', name: 'Minoxidil Kirkland', price: 45.99, stock: 8 },
-        { code: 'AR001', name: 'Aceite Barba Roterbart', price: 32.50, stock: 15 },
-        { code: 'AI001', name: 'Aceite Barba Inmortal', price: 35.75, stock: 12 },
-        { code: 'CBI001', name: 'Cera Barba Inmortal', price: 24.99, stock: 20 },
-        { code: 'SBI001', name: 'Shampoo Barba Inmortal', price: 21.50, stock: 18 },
-        { code: 'CRI001', name: 'Crema Barba Inmortal', price: 28.99, stock: 14 },
-        { code: 'DR001', name: 'Derma Roller', price: 15.99, stock: 10 }
+      { code: 'MK001', name: 'Minoxidil Kirkland', price: 45000, stock: 12 },
+      { code: 'AR001', name: 'Aceite Barba Roterbart', price: 35000, stock: 6 },
+      { code: 'AI001', name: 'Aceite Barba Inmortal', price: 38000, stock: 2 },
+      { code: 'CBI001', name: 'Cera Barba Inmortal', price: 36000, stock: 2 },
+      { code: 'SBI001', name: 'Shampoo Barba Inmortal', price: 36000, stock: 2 },
+      { code: 'CRI001', name: 'Crema Barba Inmortal', price: 38000, stock: 2 },
+      { code: 'DR001', name: 'Derma Roller', price: 20000, stock: 10 }
     ],
     facial: [
-        { code: 'EI001', name: 'Exfoliante Inmortal', price: 18.99, stock: 22 },
-        { code: 'EO001', name: 'Exfoliante Ossion', price: 16.50, stock: 25 },
-        { code: 'MN001', name: 'Mascarilla Negra Nevada', price: 24.75, stock: 16 },
-        { code: 'ASC001', name: 'After Shave Crema Red One', price: 19.99, stock: 20 }
+      { code: 'EI001', name: 'Exfoliante Inmortal', price: 17000, stock: 5 },
+      { code: 'EO001', name: 'Exfoliante Ossion', price: 35000, stock: 3 },
+      { code: 'MN001', name: 'Mascarilla Negra Nevada', price: 25000, stock: 3 },
+      { code: 'ASC001', name: 'After Shave Crema Red One', price: 50000, stock: 6 }
     ],
     maquinas: [
-        { code: 'TN001', name: 'Trimmer Nariz', price: 12.99, stock: 8 },
-        { code: 'PK001', name: 'Patillera Kemei', price: 35.50, stock: 6 }
+      { code: 'TN001', name: 'Trimmer Nariz', price: 47000, stock: 3 },
+      { code: 'PK001', name: 'Patillera Kemei', price: 80000, stock: 6 }
     ],
     insumos: [
-        { code: 'CU001', name: 'Cuelloros', price: 2.99, stock: 50 },
-        { code: 'AS001', name: 'After Shave', price: 14.99, stock: 30 },
-        { code: 'ASP001', name: 'After Shave Pequeño', price: 8.50, stock: 40 },
-        { code: 'SG001', name: 'Shaving Gel', price: 12.75, stock: 25 },
-        { code: 'SGP001', name: 'Shaving Gel Pequeño', price: 7.99, stock: 35 },
-        { code: 'CD001', name: 'Cuchillas Dórco', price: 9.99, stock: 45 },
-        { code: 'CL001', name: 'Cuchillas Level 3', price: 11.50, stock: 38 },
-        { code: 'TB001', name: 'Talco Mr Buffel', price: 6.99, stock: 42 }
+      { code: 'CU001', name: 'Cuelleros', price: 16000, stock: 12 },
+      { code: 'AS001', name: 'After Shave', price: 20000, stock: 3 },
+      { code: 'ASP001', name: 'After Shave Pequeño', price: 6000, stock: 3 },
+      { code: 'SG001', name: 'Shaving Gel', price: 23000, stock: 6 },
+      { code: 'SGP001', name: 'Shaving Gel Pequeño', price: 6000, stock: 6 },
+      { code: 'CD001', name: 'Cuchillas Dórco', price: 13000, stock: 10 },
+      { code: 'CL001', name: 'Cuchillas Level 3', price: 23000, stock: 3 },
+      { code: 'TB001', name: 'Talco Mr Buffel', price: 18000, stock: 10 }
     ]
-};
+  };
 
 // Variables globales
 let transactions = [];
